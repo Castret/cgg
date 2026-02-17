@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            font-family: Arial;
+            transition: background-color 0.3s;
+        }
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        #rgbColor {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        #colorBlocks {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .color-box {
+            width: 80px;
+            height: 80px;
+            border: 3px solid #333;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+        .color-box:hover {
+            transform: scale(1.1);
+        }
+        #score {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Color Guessing Game</h1>
+    <div id="rgbColor"></div>
+    <div id="colorBlocks"></div>
+    <div id="score">Score: 0</div>
+    <button onclick="resetGame()">Reset</button>
+
+    <script>
+        let score = 0;
+        let correctColor = '';
+        let availableColors = [];
+
+        function generateRandomColor() {
+            let r = Math.floor(Math.random() * 256);
+            let g = Math.floor(Math.random() * 256);
+            let b = Math.floor(Math.random() * 256);
+            return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+        }
+
+        function startGame() {
+            correctColor = generateRandomColor();
+            availableColors = [correctColor];
+            
+            for (let i = 0; i < 4; i++) {
+                availableColors.push(generateRandomColor());
+            }
+            
+            availableColors.sort(() => Math.random() - 0.5);
+            
+            document.getElementById('rgbColor').innerHTML = correctColor;
+            document.body.style.backgroundColor = 'white';
+            displayColors();
+        }
+
+        function displayColors() {
+            let blockDiv = document.getElementById('colorBlocks');
+            blockDiv.innerHTML = '';
+            
+            availableColors.forEach((color, index) => {
+                let box = document.createElement('div');
+                box.className = 'color-box';
+                box.style.backgroundColor = color;
+                box.onclick = function() {
+                    checkColor(color);
+                };
+                blockDiv.appendChild(box);
+            });
+        }
+
+        function checkColor(color) {
+            if (color === correctColor) {
+                score++;
+                document.getElementById('score').innerHTML = 'Score: ' + score;
+                startGame();
+            } else {
+                document.body.style.backgroundColor = color;
+                availableColors = availableColors.filter(c => c !== color);
+                displayColors();
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerHTML = 'Score: 0';
+            startGame();
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
